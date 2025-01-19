@@ -37,10 +37,8 @@ final class ToDoListTableViewCell: UITableViewCell {
     private lazy var todoLabel: UILabel = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 12)
-        view.textColor = .white
+        view.textColor = .white.withAlphaComponent(0.5)
         view.textAlignment = .left
-        view.numberOfLines = 0
-        view.lineBreakMode = .byWordWrapping
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view

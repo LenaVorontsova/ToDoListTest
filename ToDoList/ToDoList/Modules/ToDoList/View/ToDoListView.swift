@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol ToDoListViewDelegate: AnyObject {
+    func addTaskTapped()
+}
+
 final class ToDoListView: UIView {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
@@ -22,6 +26,7 @@ final class ToDoListView: UIView {
         let view = UISearchBar()
         view.placeholder = "Поиск"
         view.backgroundColor = .black
+        view.searchBarStyle = .minimal
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -34,9 +39,36 @@ final class ToDoListView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    private lazy var addTaskView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1)
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var taskCountLabel: UILabel = {
+        let view = UILabel()
+        view.font = .systemFont(ofSize: 11)
+        view.textColor = .white
+        view.text = "7 задач"
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var addTaskButton: UIButton = {
+        let view = UIButton()
+        view.setImage(UIImage(named: "addTaskIcon"), for: .normal)
+        view.addTarget(self, action: #selector(addTaskTapped), for: .touchUpInside)
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
-    init() {
+    weak var delegate: ToDoListViewDelegate?
+    
+    init(delegate: ToDoListViewDelegate?) {
         super.init(frame: .zero)
+        self.delegate = delegate
         
         self.backgroundColor = .black
         self.addSubviews()
@@ -51,6 +83,9 @@ final class ToDoListView: UIView {
         self.addSubview(titleLabel)
         self.addSubview(searchBar)
         self.addSubview(toDoListTableView)
+        self.addSubview(addTaskView)
+        addTaskView.addSubview(taskCountLabel)
+        addTaskView.addSubview(addTaskButton)
     }
     
     private func setupLayout() {
@@ -65,7 +100,26 @@ final class ToDoListView: UIView {
             toDoListTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             toDoListTableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             toDoListTableView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            toDoListTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            
+            addTaskView.topAnchor.constraint(equalTo: toDoListTableView.bottomAnchor),
+            addTaskView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            addTaskView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            addTaskView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            addTaskView.heightAnchor.constraint(equalToConstant: 83),
+            
+            taskCountLabel.centerXAnchor.constraint(equalTo: addTaskView.centerXAnchor),
+            taskCountLabel.topAnchor.constraint(equalTo: addTaskView.topAnchor, constant: 20),
+            
+            taskCountLabel.topAnchor.constraint(equalTo: addTaskView.topAnchor, constant: 20),
+            addTaskButton.trailingAnchor.constraint(equalTo: addTaskView.trailingAnchor)
         ])
+    }
+    
+    @objc func addTaskTapped() {
+        self.delegate?.addTaskTapped()
+    }
+    
+    func setTasksCount(_ count: Int) {
+        taskCountLabel.text = "\(count) задач"
     }
 }

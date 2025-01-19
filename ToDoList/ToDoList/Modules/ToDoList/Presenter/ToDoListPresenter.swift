@@ -10,6 +10,7 @@ import UIKit
 protocol ToDoListViewOutput {
     func viewDidLoad()
     func addTaskTapped(title: String, description: String?)
+    func addNewTaskTapped()
     func updateTaskTapped(task: TaskEntity)
     func deleteTaskTapped(id: Int64)
     func searchTasks(keyword: String)
@@ -18,9 +19,11 @@ protocol ToDoListViewOutput {
 final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
     weak var view: ToDoListViewInput?
     private let interactor: ToDoListInteractorInput
+    private let router: ToDoListRouterInput
 
-    init(interactor: ToDoListInteractorInput) {
+    init(interactor: ToDoListInteractorInput, router: ToDoListRouterInput) {
         self.interactor = interactor
+        self.router = router
     }
 
     func viewDidLoad() {
@@ -34,6 +37,10 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
                               createdDate: Date(),
                               completed: false)
         interactor.addTask(task)
+    }
+    
+    func addNewTaskTapped() {
+        router.navigateToTaskDetails(task: nil)
     }
 
     func updateTaskTapped(task: TaskEntity) {

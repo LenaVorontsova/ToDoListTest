@@ -17,7 +17,8 @@ final class StartService {
     
     func configureWindow() {
         if let win = window {
-            win.rootViewController = ToDoListModuleBuilder.build()
+            let navigationController = UINavigationController(rootViewController: ToDoListModuleBuilder.build())
+            win.rootViewController = navigationController
             win.makeKeyAndVisible()
         }
     }

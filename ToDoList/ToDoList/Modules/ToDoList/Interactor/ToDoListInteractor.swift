@@ -56,6 +56,9 @@ final class ToDoListInteractor: ToDoListInteractorInput {
     func addTask(_ task: TaskEntity) {
         DispatchQueue.global(qos: .background).async {
             self.coreDataManager.addTask(task)
+            DispatchQueue.main.async {
+                self.fetchTasks()
+            }
         }
     }
     
