@@ -74,6 +74,9 @@ final class ToDoListInteractor: ToDoListInteractorInput {
     func deleteTask(by id: Int64) {
         DispatchQueue.global(qos: .background).async {
             self.coreDataManager.deleteTask(by: id)
+            DispatchQueue.main.async {
+                self.fetchTasks()
+            }
         }
     }
     

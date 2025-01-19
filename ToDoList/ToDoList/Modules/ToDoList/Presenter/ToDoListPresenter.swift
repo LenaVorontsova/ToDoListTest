@@ -10,7 +10,7 @@ import UIKit
 protocol ToDoListViewOutput {
     func viewDidLoad()
     func addTaskTapped(title: String, description: String?)
-    func addNewTaskTapped()
+    func addNewTaskTapped(_ task: TaskEntity?)
     func updateTaskTapped(task: TaskEntity)
     func deleteTaskTapped(id: Int64)
     func searchTasks(keyword: String)
@@ -39,8 +39,8 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
         interactor.addTask(task)
     }
     
-    func addNewTaskTapped() {
-        router.navigateToTaskDetails(task: nil)
+    func addNewTaskTapped(_ task: TaskEntity? = nil) {
+        router.navigateToTaskDetails(task: task)
     }
 
     func updateTaskTapped(task: TaskEntity) {

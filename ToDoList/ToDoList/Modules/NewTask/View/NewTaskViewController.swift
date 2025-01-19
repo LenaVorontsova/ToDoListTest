@@ -12,6 +12,7 @@ final class NewTaskViewController: UIViewController {
     
     var presenter: ToDoListViewOutput?
     var mainVC: ToDoListViewInput?
+    var task: TaskEntity?
     
     override func loadView() {
         super.loadView()
@@ -21,6 +22,8 @@ final class NewTaskViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.tintColor = .yellow
         
         setupTextViews()
         setupNotifications()
@@ -36,7 +39,8 @@ final class NewTaskViewController: UIViewController {
         self.mainView.titleTextView.delegate = self
         self.mainView.todoTextView.delegate = self
         
-        navigationController?.navigationBar.tintColor = .yellow
+        self.mainView.titleTextView.text = task?.title ?? "Заголовок"
+        self.mainView.todoTextView.text = task?.todo ?? "Введите текст..."
     }
     
     private func setupNotifications() {
@@ -62,13 +66,20 @@ final class NewTaskViewController: UIViewController {
     }
     
     private func saveTask() {
-        let newTask = TaskEntity(id: Int64(Date().timeIntervalSince1970),
-                                 title: self.mainView.titleTextView.text,
-                                 todo: self.mainView.todoTextView.text,
-                                 createdDate: Date(),
-                                 completed: false)
-        CoreDataManager.shared.addTask(newTask)
-        mainVC?.didAddNewTask(task: newTask)
+        if let task = self.task {
+            self.task?.title = self.mainView.titleTextView.text
+            self.task?.todo = self.mainView.todoTextView.text
+            self.task?.createdDate = Date()
+            mainVC?.didEditTask(task: self.task ?? TaskEntity(id: task.id))
+        } else {
+            let newTask = TaskEntity(id: Int64(Date().timeIntervalSince1970),
+                                     title: self.mainView.titleTextView.text,
+                                     todo: self.mainView.todoTextView.text,
+                                     createdDate: Date(),
+                                     completed: false)
+            CoreDataManager.shared.addTask(newTask)
+            mainVC?.didAddNewTask(task: newTask)
+        }
     }
 }
 

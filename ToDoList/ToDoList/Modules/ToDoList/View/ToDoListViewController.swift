@@ -11,6 +11,7 @@ protocol ToDoListViewInput: AnyObject {
     func displayTasks(_ tasks: [TaskEntity])
     func displayError(_ error: String)
     func didAddNewTask(task: TaskEntity)
+    func didEditTask(task: TaskEntity)
 }
 
 final class ToDoListViewController: UIViewController {
@@ -43,7 +44,7 @@ final class ToDoListViewController: UIViewController {
 
 extension ToDoListViewController: ToDoListViewDelegate {
     func addTaskTapped() {
-        presenter?.addNewTaskTapped()
+        presenter?.addNewTaskTapped(nil)
     }
 }
 
@@ -76,6 +77,10 @@ extension ToDoListViewController: ToDoListViewInput {
     
     func didAddNewTask(task: TaskEntity) {
         presenter?.viewDidLoad()
+    }
+    
+    func didEditTask(task: TaskEntity) {
+        presenter?.updateTaskTapped(task: task)
     }
 }
 
@@ -120,15 +125,17 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func editTask(at indexPath: IndexPath) {
-        print("Редактировать задачу: \(tasks[indexPath.row].title)")
+        presenter?.addNewTaskTapped(tasks[indexPath.row])
     }
     
     func shareTask(at indexPath: IndexPath) {
-        print("Поделиться задачей: \(tasks[indexPath.row].title)")
+        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
+        let activity = UIActivityViewController(activityItems: [textToShare],
+                                                applicationActivities: nil)
+        present(activity, animated: true)
     }
     
     func deleteTask(at indexPath: IndexPath) {
-        print("Удалить задачу: \(tasks[indexPath.row].title)")
+        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
     }
-
 }
