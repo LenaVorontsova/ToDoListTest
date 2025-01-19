@@ -96,4 +96,39 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let task = tasks[indexPath.row]
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
+            let previewViewController = TaskPreviewViewController()
+            previewViewController.task = task
+            return previewViewController
+        }) { _ in
+            let editAction = UIAction(title: "Редактировать", image: UIImage(systemName: "pencil")) { _ in
+                self.editTask(at: indexPath)
+            }
+            let shareAction = UIAction(title: "Поделиться", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                self.shareTask(at: indexPath)
+            }
+            let deleteAction = UIAction(title: "Удалить", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                self.deleteTask(at: indexPath)
+            }
+            
+            return UIMenu(children: [editAction, shareAction, deleteAction])
+        }
+    }
+    
+    func editTask(at indexPath: IndexPath) {
+        print("Редактировать задачу: \(tasks[indexPath.row].title)")
+    }
+    
+    func shareTask(at indexPath: IndexPath) {
+        print("Поделиться задачей: \(tasks[indexPath.row].title)")
+    }
+    
+    func deleteTask(at indexPath: IndexPath) {
+        print("Удалить задачу: \(tasks[indexPath.row].title)")
+    }
+
 }
