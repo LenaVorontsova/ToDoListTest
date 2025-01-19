@@ -10,6 +10,12 @@ import UIKit
 final class ToDoListModuleBuilder {
     static func build() -> UIViewController {
         let viewController = ToDoListViewController()
+        let interactor = ToDoListInteractor()
+        let presenter = ToDoListPresenter(interactor: interactor)
+        
+        viewController.presenter = presenter
+        presenter.view = viewController
+        interactor.output = presenter
 
         return viewController
     }

@@ -7,10 +7,16 @@
 
 import UIKit
 
+protocol ToDoListViewInput: AnyObject {
+    func displayTasks(_ tasks: [TaskEntity])
+    func displayError(_ error: String)
+}
+
 final class ToDoListViewController: UIViewController {
     private lazy var mainView = ToDoListView()
     
-    private let tasks: [TaskEntity] = []
+    var presenter: ToDoListViewOutput?
+    private var tasks: [TaskEntity] = []
     
     override func loadView() {
         super.loadView()
@@ -21,6 +27,8 @@ final class ToDoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        presenter?.viewDidLoad()
+        print(tasks)
         setupTableView()
     }
     
@@ -35,6 +43,19 @@ final class ToDoListViewController: UIViewController {
 extension ToDoListViewController: ToDoListTableViewCellDelegate {
     func didToggleCheckbox(for task: TaskEntity) {
         
+    }
+}
+
+extension ToDoListViewController: ToDoListViewInput {
+    func displayTasks(_ tasks: [TaskEntity]) {
+        self.tasks = tasks
+        self.mainView.toDoListTableView.reloadData()
+    }
+    
+    func displayError(_ error: String) {
+        let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
