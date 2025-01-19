@@ -22,11 +22,12 @@ final class ToDoListView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private lazy var searchBar: UISearchBar = {
+    public lazy var searchBar: UISearchBar = {
         let view = UISearchBar()
         view.placeholder = "Поиск"
         view.backgroundColor = .black
         view.searchBarStyle = .minimal
+        view.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view

@@ -23,7 +23,7 @@ final class NewTaskViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.tintColor = .yellow
+        navigationController?.navigationBar.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
         
         setupTextViews()
         setupNotifications()

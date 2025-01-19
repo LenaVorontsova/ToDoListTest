@@ -13,7 +13,6 @@ protocol ToDoListInteractorInput {
     func addTask(_ task: TaskEntity)
     func updateTask(_ task: TaskEntity)
     func deleteTask(by id: Int64)
-    func searchTasks(by keyword: String)
 }
 
 protocol ToDoListInteractorOutput: AnyObject {
@@ -78,9 +77,5 @@ final class ToDoListInteractor: ToDoListInteractorInput {
                 self.fetchTasks()
             }
         }
-    }
-    
-    func searchTasks(by keyword: String) {
-        
     }
 }

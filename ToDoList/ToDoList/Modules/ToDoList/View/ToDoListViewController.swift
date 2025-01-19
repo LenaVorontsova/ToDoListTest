@@ -12,14 +12,17 @@ protocol ToDoListViewInput: AnyObject {
     func displayError(_ error: String)
     func didAddNewTask(task: TaskEntity)
     func didEditTask(task: TaskEntity)
+    func reloadData()
 }
 
 final class ToDoListViewController: UIViewController {
     private lazy var mainView = ToDoListView(delegate: self)
-    var router: ToDoListRouterInput?
     
+    var router: ToDoListRouterInput?
     var presenter: ToDoListViewOutput?
+    
     private var tasks: [TaskEntity] = []
+    private var filteredTasks: [TaskEntity] = []
     
     override func loadView() {
         super.loadView()
@@ -31,7 +34,11 @@ final class ToDoListViewController: UIViewController {
         super.viewDidLoad()
         
         presenter?.viewDidLoad()
+        
+        filteredTasks = tasks
+        
         setupTableView()
+        setupSearchBar()
     }
     
     private func setupTableView() {
@@ -39,6 +46,38 @@ final class ToDoListViewController: UIViewController {
         self.mainView.toDoListTableView.delegate = self
         self.mainView.toDoListTableView.register(ToDoListTableViewCell.self,
                                                  forCellReuseIdentifier: ToDoListTableViewCell.identifier)
+    }
+    
+    private func setupSearchBar() {
+        self.mainView.searchBar.delegate = self
+    }
+    
+    func editTask(at indexPath: IndexPath) {
+        presenter?.addNewTaskTapped(tasks[indexPath.row])
+    }
+    
+    func shareTask(at indexPath: IndexPath) {
+        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
+        let activity = UIActivityViewController(activityItems: [textToShare],
+                                                applicationActivities: nil)
+        present(activity, animated: true)
+    }
+    
+    func deleteTask(at indexPath: IndexPath) {
+        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
+    }
+    
+    private func filterTasks(for searchText: String) {
+        if searchText.isEmpty {
+            filteredTasks = tasks
+        } else {
+            filteredTasks = tasks.filter { task in
+                task.title?.lowercased().contains(searchText.lowercased()) == true ||
+                task.todo?.lowercased().contains(searchText.lowercased()) == true
+            }
+        }
+        
+        self.mainView.toDoListTableView.reloadData()
     }
 }
 
@@ -82,6 +121,12 @@ extension ToDoListViewController: ToDoListViewInput {
     func didEditTask(task: TaskEntity) {
         presenter?.updateTaskTapped(task: task)
     }
+    
+    func reloadData() {
+        DispatchQueue.main.async {
+            self.mainView.toDoListTableView.reloadData()
+        }
+    }
 }
 
 extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -123,19 +168,19 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
             return UIMenu(children: [editAction, shareAction, deleteAction])
         }
     }
-    
-    func editTask(at indexPath: IndexPath) {
-        presenter?.addNewTaskTapped(tasks[indexPath.row])
+}
+
+extension ToDoListViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterTasks(for: searchText)
     }
     
-    func shareTask(at indexPath: IndexPath) {
-        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
-        let activity = UIActivityViewController(activityItems: [textToShare],
-                                                applicationActivities: nil)
-        present(activity, animated: true)
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
     
-    func deleteTask(at indexPath: IndexPath) {
-        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        filterTasks(for: "")
     }
 }

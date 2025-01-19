@@ -35,7 +35,7 @@ final class NewTaskView: UIView {
         view.sizeToFit()
         view.isScrollEnabled = false
         view.textAlignment = .natural
-        view.tintColor = .yellow
+        view.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -58,7 +58,7 @@ final class NewTaskView: UIView {
         view.sizeToFit()
         view.isScrollEnabled = false
         view.textAlignment = .natural
-        view.tintColor = .yellow
+        view.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view

@@ -13,7 +13,6 @@ protocol ToDoListViewOutput {
     func addNewTaskTapped(_ task: TaskEntity?)
     func updateTaskTapped(task: TaskEntity)
     func deleteTaskTapped(id: Int64)
-    func searchTasks(keyword: String)
 }
 
 final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
@@ -49,10 +48,6 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
 
     func deleteTaskTapped(id: Int64) {
         interactor.deleteTask(by: id)
-    }
-
-    func searchTasks(keyword: String) {
-        interactor.searchTasks(by: keyword)
     }
     
     func didFetchTasks(_ tasks: [TaskEntity]) {
