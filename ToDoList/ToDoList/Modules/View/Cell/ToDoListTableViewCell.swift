@@ -90,6 +90,13 @@ final class ToDoListTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        titleLabel.attributedText = NSAttributedString(
+            string: "",
+            attributes: nil
+        )
+    }
+    
     private func addSubviews() {
         contentView.addSubview(checkButton)
         contentView.addSubview(stackView)
@@ -115,41 +122,42 @@ final class ToDoListTableViewCell: UITableViewCell {
     
     func configure(task: TaskEntity) {
         self.task = task
-        if let completed = task.completed {
-            checkButton.isSelected = completed
-        }
+        
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        checkButton.isSelected = task.completed ?? false
+        
         if let title = task.title {
-            stackView.addArrangedSubview(titleLabel)
             titleLabel.text = title
+            stackView.addArrangedSubview(titleLabel)
         }
-        if let todo = task.todo {
-            stackView.addArrangedSubview(todoLabel)
+        
+        if let todo = task.todo, !todo.isEmpty {
             todoLabel.text = todo
+            stackView.addArrangedSubview(todoLabel)
         }
+        
         if let createdDate = task.createdDate {
-            stackView.addArrangedSubview(dateLabel)
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MM/dd/yy"
-            let dateString = dateFormatter.string(from: createdDate)
-            dateLabel.text = dateString
+            dateLabel.text = dateFormatter.string(from: createdDate)
+            stackView.addArrangedSubview(dateLabel)
         }
+        
         updateStyle()
     }
     
     private func updateStyle() {
-        if task?.completed == true {
-            titleLabel.textColor = .white.withAlphaComponent(0.5)
-            todoLabel.textColor = .white.withAlphaComponent(0.5)
-            titleLabel.attributedText = NSAttributedString(
-                string: titleLabel.text ?? "",
-                attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue]
-            )
-        } else {
-            titleLabel.textColor = .white
-            todoLabel.textColor = .white
-            titleLabel.attributedText = NSAttributedString(string: titleLabel.text ?? "",
-                                                           attributes: nil)
-        }
+        let isCompleted = task?.completed ?? false
+        
+        titleLabel.attributedText = NSAttributedString(
+            string: titleLabel.text ?? "",
+            attributes: isCompleted ? [.strikethroughStyle: NSUnderlineStyle.single.rawValue] : nil
+        )
+        
+        let textColor = isCompleted ? UIColor.white.withAlphaComponent(0.5) : .white
+        titleLabel.textColor = textColor
+        todoLabel.textColor = textColor
     }
     
     @objc private func checkboxTapped() {

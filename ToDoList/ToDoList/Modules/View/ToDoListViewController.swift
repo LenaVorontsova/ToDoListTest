@@ -28,7 +28,6 @@ final class ToDoListViewController: UIViewController {
         super.viewDidLoad()
         
         presenter?.viewDidLoad()
-        print(tasks)
         setupTableView()
     }
     
@@ -42,7 +41,11 @@ final class ToDoListViewController: UIViewController {
 
 extension ToDoListViewController: ToDoListTableViewCellDelegate {
     func didToggleCheckbox(for task: TaskEntity) {
+        guard let index = tasks.firstIndex(where: { $0.id == task.id }) else { return }
+        tasks[index].completed?.toggle()
+        presenter?.updateTaskTapped(task: tasks[index])
         
+        mainView.toDoListTableView.reloadData()
     }
 }
 
@@ -76,6 +79,4 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
-    
-    
 }

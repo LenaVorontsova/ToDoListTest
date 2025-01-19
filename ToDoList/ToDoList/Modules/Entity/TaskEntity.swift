@@ -9,10 +9,10 @@ import Foundation
 
 struct TaskEntity: Decodable {
     let id: Int64?
-    let title: String?
-    let todo: String?
-    let createdDate: Date?
-    let completed: Bool?
+    var title: String?
+    var todo: String?
+    var createdDate: Date?
+    var completed: Bool?
 }
 
 struct TodoResponse: Decodable {
