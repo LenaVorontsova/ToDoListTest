@@ -16,7 +16,7 @@ final class ToDoListModuleBuilder {
         
         viewController.presenter = presenter
         presenter.view = viewController
-        interactor.output = presenter
+        interactor.presenter = presenter
         router.viewController = viewController
 
         return viewController

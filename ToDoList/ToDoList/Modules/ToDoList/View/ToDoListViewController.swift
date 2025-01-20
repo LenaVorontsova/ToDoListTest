@@ -115,7 +115,7 @@ extension ToDoListViewController: ToDoListViewInput {
     }
     
     func didAddNewTask(task: TaskEntity) {
-        presenter?.viewDidLoad()
+        presenter?.addTaskTapped(title: task.title ?? "", description: task.todo)
     }
     
     func didEditTask(task: TaskEntity) {

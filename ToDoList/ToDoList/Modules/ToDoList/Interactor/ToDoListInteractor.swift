@@ -21,7 +21,7 @@ protocol ToDoListInteractorOutput: AnyObject {
 }
 
 final class ToDoListInteractor: ToDoListInteractorInput {
-    weak var output: ToDoListInteractorOutput?
+    weak var presenter: ToDoListInteractorOutput?
     private let networkManager = NetworkManager.shared
     private let coreDataManager = CoreDataManager.shared
     
@@ -30,7 +30,7 @@ final class ToDoListInteractor: ToDoListInteractorInput {
         
         // If the app is opened for the first time
         if !savedTasks.isEmpty {
-            output?.didFetchTasks(savedTasks)
+            presenter?.didFetchTasks(savedTasks)
         } else {
             networkManager.fetchTodos { [weak self] result in
                 guard let self = self else { return }
@@ -40,12 +40,12 @@ final class ToDoListInteractor: ToDoListInteractorInput {
                     self.coreDataManager.saveFetchedTasks(tasks)
                     
                     DispatchQueue.main.async {
-                        self.output?.didFetchTasks(tasks)
+                        self.presenter?.didFetchTasks(tasks)
                     }
                     
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        self.output?.didFailFetchingTasks(with: error)
+                        self.presenter?.didFailFetchingTasks(with: error)
                     }
                 }
             }

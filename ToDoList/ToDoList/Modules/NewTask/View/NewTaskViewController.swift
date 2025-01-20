@@ -7,11 +7,14 @@
 
 import UIKit
 
+protocol NewTaskViewInput {
+    
+}
+
 final class NewTaskViewController: UIViewController {
     private lazy var mainView = NewTaskView()
     
-    var presenter: ToDoListViewOutput?
-    var mainVC: ToDoListViewInput?
+    var presenter: NewTaskPresenterOutput?
     var task: TaskEntity?
     
     override func loadView() {
@@ -23,8 +26,7 @@ final class NewTaskViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
-        
+        setupNavigationController()
         setupTextViews()
         setupNotifications()
         hideKeyboardWhenTappedAround()
@@ -33,6 +35,13 @@ final class NewTaskViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         saveTask()
+    }
+    
+    private func setupNavigationController() {
+        navigationController?.navigationBar.tintColor = UIColor(red: 254/255,
+                                                                green: 215/255,
+                                                                blue: 2/255,
+                                                                alpha: 1)
     }
     
     private func setupTextViews() {
@@ -67,18 +76,12 @@ final class NewTaskViewController: UIViewController {
     
     private func saveTask() {
         if let task = self.task {
-            self.task?.title = self.mainView.titleTextView.text
-            self.task?.todo = self.mainView.todoTextView.text
-            self.task?.createdDate = Date()
-            mainVC?.didEditTask(task: self.task ?? TaskEntity(id: task.id))
+            presenter?.editTask(task: self.task ?? TaskEntity(id: task.id),
+                                title: self.mainView.titleTextView.text,
+                                todo: self.mainView.todoTextView.text)
         } else {
-            let newTask = TaskEntity(id: Int64(Date().timeIntervalSince1970),
-                                     title: self.mainView.titleTextView.text,
-                                     todo: self.mainView.todoTextView.text,
-                                     createdDate: Date(),
-                                     completed: false)
-            CoreDataManager.shared.addTask(newTask)
-            mainVC?.didAddNewTask(task: newTask)
+            presenter?.addNewTask(title: self.mainView.titleTextView.text,
+                                  todo: self.mainView.todoTextView.text)
         }
     }
 }
