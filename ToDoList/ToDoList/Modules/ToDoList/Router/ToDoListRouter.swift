@@ -15,12 +15,8 @@ final class ToDoListRouter: ToDoListRouterInput {
     weak var viewController: ToDoListViewController?
     
     func navigateToTaskDetails(task: TaskEntity?) {
-        let newTaskVC = NewTaskViewController()
-        let presenter = NewTaskPresenter()
-        
-        presenter.mainVC = viewController
-        newTaskVC.task = task
-        newTaskVC.presenter = presenter
+        let newTaskVC = NewTaskModuleBuilder.build(mainVC: viewController,
+                                                   task: task)
         
         viewController?.navigationController?.pushViewController(newTaskVC, animated: true)
     }
