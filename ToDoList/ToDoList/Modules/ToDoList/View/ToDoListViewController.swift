@@ -48,23 +48,9 @@ final class ToDoListViewController: UIViewController {
                                                  forCellReuseIdentifier: ToDoListTableViewCell.identifier)
     }
     
+    // - MARK: Task Search
     private func setupSearchBar() {
         self.mainView.searchBar.delegate = self
-    }
-    
-    func editTask(at indexPath: IndexPath) {
-        presenter?.addNewTaskTapped(tasks[indexPath.row])
-    }
-    
-    func shareTask(at indexPath: IndexPath) {
-        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
-        let activity = UIActivityViewController(activityItems: [textToShare],
-                                                applicationActivities: nil)
-        present(activity, animated: true)
-    }
-    
-    func deleteTask(at indexPath: IndexPath) {
-        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
     }
     
     private func filterTasks(for searchText: String) {
@@ -79,14 +65,32 @@ final class ToDoListViewController: UIViewController {
         
         self.mainView.toDoListTableView.reloadData()
     }
+    
+    // - MARK: Context Menu Tasks
+    func editTask(at indexPath: IndexPath) {
+        presenter?.addNewTaskTapped(tasks[indexPath.row])
+    }
+    
+    func shareTask(at indexPath: IndexPath) {
+        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
+        let activity = UIActivityViewController(activityItems: [textToShare],
+                                                applicationActivities: nil)
+        present(activity, animated: true)
+    }
+    
+    func deleteTask(at indexPath: IndexPath) {
+        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
+    }
 }
 
+// - MARK: ToDoListViewDelegate
 extension ToDoListViewController: ToDoListViewDelegate {
     func addTaskTapped() {
         presenter?.addNewTaskTapped(nil)
     }
 }
 
+// - MARK: ToDoListTableViewCellDelegate
 extension ToDoListViewController: ToDoListTableViewCellDelegate {
     func didToggleCheckbox(for task: TaskEntity) {
         guard let index = tasks.firstIndex(where: { $0.id == task.id }) else { return }
@@ -99,6 +103,7 @@ extension ToDoListViewController: ToDoListTableViewCellDelegate {
     }
 }
 
+// - MARK: ToDoListViewInput
 extension ToDoListViewController: ToDoListViewInput {
     func displayTasks(_ tasks: [TaskEntity]) {
         self.tasks = tasks
@@ -129,6 +134,7 @@ extension ToDoListViewController: ToDoListViewInput {
     }
 }
 
+// - MARK: UITableViewDelegate, UITableViewDataSource
 extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tasks.count
@@ -170,6 +176,7 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// - MARK: UISearchBarDelegate
 extension ToDoListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filterTasks(for: searchText)

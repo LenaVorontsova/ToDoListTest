@@ -25,6 +25,7 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
         self.router = router
     }
 
+    // MARK: - ToDoListViewOutput
     func viewDidLoad() {
         interactor.fetchTasks()
     }
@@ -50,6 +51,7 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
         interactor.deleteTask(by: id)
     }
     
+    // MARK: - ToDoListInteractorOutput
     func didFetchTasks(_ tasks: [TaskEntity]) {
         view?.displayTasks(tasks)
     }

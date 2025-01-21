@@ -7,10 +7,18 @@
 
 import UIKit
 
-final class NetworkManager {
+protocol NetworkManagerProtocol {
+    func fetchTodos(completion: @escaping (Result<[TaskEntity], Error>) -> Void)
+}
+
+final class NetworkManager: NetworkManagerProtocol {
     static let shared = NetworkManager()
     private let session = URLSession.shared
-    private let urlString = "https://dummyjson.com/todos"
+    private var urlString = "https://dummyjson.com/todos"
+    
+    func setNewURL(_ urlString: String) {
+        self.urlString = urlString
+    }
     
     func fetchTodos(completion: @escaping (Result<[TaskEntity], Error>) -> Void) {
         guard let url = URL(string: urlString) else {

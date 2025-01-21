@@ -8,7 +8,14 @@
 import UIKit
 import CoreData
 
-final class CoreDataManager {
+protocol CoreDataManagerProtocol {
+    func fetchTasks() -> [TaskEntity]
+    func addTask(_ task: TaskEntity)
+    func updateTask(_ task: TaskEntity)
+    func deleteTask(by id: Int64)
+}
+
+final class CoreDataManager: CoreDataManagerProtocol {
     static let shared = CoreDataManager()
     private init() {}
     

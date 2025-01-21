@@ -28,7 +28,6 @@ final class ToDoListInteractor: ToDoListInteractorInput {
     func fetchTasks() {
         let savedTasks = coreDataManager.fetchTasks()
         
-        // If the app is opened for the first time
         if !savedTasks.isEmpty {
             presenter?.didFetchTasks(savedTasks)
         } else {
