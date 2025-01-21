@@ -7,9 +7,7 @@
 
 import UIKit
 
-protocol NewTaskViewInput {
-    
-}
+protocol NewTaskViewInput { }
 
 final class NewTaskViewController: UIViewController {
     private lazy var mainView = NewTaskView()

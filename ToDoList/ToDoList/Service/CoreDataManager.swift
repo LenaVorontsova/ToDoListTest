@@ -13,6 +13,7 @@ protocol CoreDataManagerProtocol {
     func addTask(_ task: TaskEntity)
     func updateTask(_ task: TaskEntity)
     func deleteTask(by id: Int64)
+    func saveFetchedTasks(_ tasks: [TaskEntity])
 }
 
 final class CoreDataManager: CoreDataManagerProtocol {
@@ -50,6 +51,7 @@ final class CoreDataManager: CoreDataManagerProtocol {
     // MARK: - Fetch Tasks
     func fetchTasks() -> [TaskEntity] {
         let fetchRequest: NSFetchRequest<ToDoList> = ToDoList.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         do {
             let tasks = try context.fetch(fetchRequest)
             

@@ -22,8 +22,13 @@ protocol ToDoListInteractorOutput: AnyObject {
 
 final class ToDoListInteractor: ToDoListInteractorInput {
     weak var presenter: ToDoListInteractorOutput?
-    private let networkManager = NetworkManager.shared
-    private let coreDataManager = CoreDataManager.shared
+    private var networkManager: NetworkManagerProtocol = NetworkManager.shared
+    private var coreDataManager: CoreDataManagerProtocol = CoreDataManager.shared
+    
+    func setupManagers(network: NetworkManagerProtocol, coreData: CoreDataManagerProtocol) {
+        networkManager = network
+        coreDataManager = coreData
+    }
     
     func fetchTasks() {
         let savedTasks = coreDataManager.fetchTasks()

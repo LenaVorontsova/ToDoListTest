@@ -12,7 +12,6 @@ protocol NewTaskPresenterOutput {
     func editTask(task: TaskEntity, title: String, todo: String)
 }
 
-
 final class NewTaskPresenter: NewTaskPresenterOutput {
     var mainVC: ToDoListViewInput?
     

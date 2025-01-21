@@ -9,7 +9,7 @@ import UIKit
 
 protocol ToDoListViewOutput {
     func viewDidLoad()
-    func addTaskTapped(title: String, description: String?)
+    func addTaskTapped(title: String, todo: String?)
     func addNewTaskTapped(_ task: TaskEntity?)
     func updateTaskTapped(task: TaskEntity)
     func deleteTaskTapped(id: Int64)
@@ -30,10 +30,10 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
         interactor.fetchTasks()
     }
 
-    func addTaskTapped(title: String, description: String?) {
+    func addTaskTapped(title: String, todo: String?) {
         let task = TaskEntity(id: Int64(Date().timeIntervalSince1970),
                               title: title,
-                              todo: description,
+                              todo: todo,
                               createdDate: Date(),
                               completed: false)
         interactor.addTask(task)
