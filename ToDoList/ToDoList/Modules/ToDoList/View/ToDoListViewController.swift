@@ -161,13 +161,16 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
             previewViewController.task = task
             return previewViewController
         }) { _ in
-            let editAction = UIAction(title: "Редактировать", image: UIImage(systemName: "pencil")) { _ in
+            let editAction = UIAction(title: Localize.ToDoList.editTask.getValue(),
+                                      image: UIImage(systemName: "pencil")) { _ in
                 self.editTask(at: indexPath)
             }
-            let shareAction = UIAction(title: "Поделиться", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+            let shareAction = UIAction(title: Localize.ToDoList.shareTask.getValue(),
+                                       image: UIImage(systemName: "square.and.arrow.up")) { _ in
                 self.shareTask(at: indexPath)
             }
-            let deleteAction = UIAction(title: "Удалить", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+            let deleteAction = UIAction(title: Localize.ToDoList.deleteTask.getValue(),
+                                        image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                 self.deleteTask(at: indexPath)
             }
             

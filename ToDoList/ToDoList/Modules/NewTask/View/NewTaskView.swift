@@ -28,7 +28,7 @@ final class NewTaskView: UIView {
     }()
     public lazy var titleTextView: UITextView = {
         let view = UITextView()
-        view.text = "Заголовок"
+        view.text = Localize.NewTask.title.getValue()
         view.textColor = .white
         view.backgroundColor = .clear
         view.font = .boldSystemFont(ofSize: 34)
@@ -51,7 +51,7 @@ final class NewTaskView: UIView {
     }()
     public lazy var todoTextView: UITextView = {
         let view = UITextView()
-        view.text = "Введите текст..."
+        view.text = Localize.NewTask.todo.getValue()
         view.textColor = .white
         view.backgroundColor = .clear
         view.font = .systemFont(ofSize: 16)

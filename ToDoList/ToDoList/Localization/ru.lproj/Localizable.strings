@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  ToDoList
+
+  Created by Елена Воронцова on 21.01.2025.
+  
+*/
+
+"toDoList.tasks" = "Задачи";
+"toDoList.search" = "Поиск";
+"toDoList.taskCount" = " задач";
+"toDoList.editTask" = "Редактировать";
+"toDoList.shareTask" = "Поделиться";
+"toDoList.deleteTask" = "Удалить";
+
+"newTask.title" = "Заголовок";
+"newTask.todo" = "Введите текст...";

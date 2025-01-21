@@ -60,4 +60,3 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
         view?.displayError(error.localizedDescription)
     }
 }
-

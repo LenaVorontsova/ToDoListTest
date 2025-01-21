@@ -17,14 +17,14 @@ final class ToDoListView: UIView {
         view.font = .boldSystemFont(ofSize: 34)
         view.textColor = .white
         view.textAlignment = .left
-        view.text = "Задачи"
+        view.text = Localize.ToDoList.tasks.getValue()
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     public lazy var searchBar: UISearchBar = {
         let view = UISearchBar()
-        view.placeholder = "Поиск"
+        view.placeholder = Localize.ToDoList.search.getValue()
         view.backgroundColor = .black
         view.searchBarStyle = .minimal
         view.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
@@ -51,7 +51,7 @@ final class ToDoListView: UIView {
         let view = UILabel()
         view.font = .systemFont(ofSize: 11)
         view.textColor = .white
-        view.text = "7 задач"
+        view.text = Localize.ToDoList.taskCount.getValue()
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -121,6 +121,6 @@ final class ToDoListView: UIView {
     }
     
     func setTasksCount(_ count: Int) {
-        taskCountLabel.text = "\(count) задач"
+        taskCountLabel.text = "\(count)\(Localize.ToDoList.taskCount.getValue())"
     }
 }

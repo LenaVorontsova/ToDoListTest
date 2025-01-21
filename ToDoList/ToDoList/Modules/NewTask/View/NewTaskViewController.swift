@@ -46,8 +46,8 @@ final class NewTaskViewController: UIViewController {
         self.mainView.titleTextView.delegate = self
         self.mainView.todoTextView.delegate = self
         
-        self.mainView.titleTextView.text = task?.title ?? "Заголовок"
-        self.mainView.todoTextView.text = task?.todo ?? "Введите текст..."
+        self.mainView.titleTextView.text = task?.title ?? Localize.NewTask.title.getValue()
+        self.mainView.todoTextView.text = task?.todo ?? Localize.NewTask.todo.getValue()
     }
     
     private func setupNotifications() {
@@ -87,11 +87,11 @@ final class NewTaskViewController: UIViewController {
 extension NewTaskViewController: UITextFieldDelegate, UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView == self.mainView.titleTextView {
-            if textView.text == "Заголовок" {
+            if textView.text == Localize.NewTask.title.getValue() {
                 textView.text = ""
             }
         } else {
-            if textView.text == "Введите текст..." {
+            if textView.text == Localize.NewTask.todo.getValue() {
                 textView.text = ""
             }
         }
