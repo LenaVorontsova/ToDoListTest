@@ -104,15 +104,16 @@ final class ToDoListInteractorTest: XCTestCase {
         let existingTask = TaskEntity(id: 1, title: "Old Task", todo: "Old Todo", createdDate: Date(), completed: false)
         let updatedTask = TaskEntity(id: 1, title: "Updated Task", todo: "Updated Todo", createdDate: Date(), completed: true)
         mockCoreDataManager.mockTasks = [existingTask]
-        let expectation = XCTestExpectation(description: "Task is updated and fetched")
         
+        let expectation = XCTestExpectation(description: "Task is updated and presenter is notified")
+
         interactor.updateTask(updatedTask)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            XCTAssertTrue(self.mockCoreDataManager.updateTaskCalled, "updateTask was not called")
-            XCTAssertEqual(self.mockCoreDataManager.updatedTask?.id, updatedTask.id, "Updated task ID does not match")
-            XCTAssertTrue(self.mockPresenter.didFetchTasksCalled, "didFetchTasks was not called")
-            XCTAssertEqual(self.mockPresenter.fetchedTasks?.first?.title, "Updated Task", "Task title was not updated correctly")
+            XCTAssertTrue(self.mockPresenter.didUpdateTaskCalled, "didUpdateTask was not called")
+            
+            XCTAssertEqual(self.mockPresenter.updatedTask?.title, "Updated Task", "Task title was not updated correctly")
+            
             expectation.fulfill()
         }
         
@@ -138,6 +139,25 @@ final class ToDoListInteractorTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
+    func testUpdateTask_ShouldUpdateAndNotifyPresenter() {
+        let existingTask = TaskEntity(id: 1, title: "Old Task", todo: "Old Todo", createdDate: Date(), completed: false)
+        let updatedTask = TaskEntity(id: 1, title: "Updated Task", todo: "Updated Todo", createdDate: Date(), completed: true)
+        mockCoreDataManager.mockTasks = [existingTask]
+        let expectation = XCTestExpectation(description: "Task is updated and presenter is notified")
+
+        interactor.updateTask(updatedTask)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(self.mockCoreDataManager.updateTaskCalled, "updateTask was not called")
+            XCTAssertEqual(self.mockCoreDataManager.updatedTask?.id, updatedTask.id, "The ID of the updated issue does not match")
+            
+            XCTAssertTrue(self.mockPresenter.didUpdateTaskCalled, "didUpdateTask was not called in the presenter")
+            XCTAssertEqual(self.mockPresenter.updatedTask?.title, "Updated Task", "The name of the updated task does not match")
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1.0)
+    }
 }
 
 final class MockPresenter: ToDoListInteractorOutput {
@@ -147,15 +167,22 @@ final class MockPresenter: ToDoListInteractorOutput {
     var didFailFetchingTasksCalled = false
     var fetchError: Error?
 
+    var didUpdateTaskCalled = false
+    var updatedTask: TaskEntity?
+
     func didFetchTasks(_ tasks: [TaskEntity]) {
         didFetchTasksCalled = true
         fetchedTasks = tasks
-        print("MockPresenter: didFetchTasks called with \(tasks.count) tasks")
     }
 
     func didFailFetchingTasks(with error: Error) {
         didFailFetchingTasksCalled = true
         fetchError = error
+    }
+
+    func didUpdateTask(_ task: TaskEntity) {
+        didUpdateTaskCalled = true
+        updatedTask = task
     }
 }
 

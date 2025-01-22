@@ -82,5 +82,7 @@ final class MockToDoListView: ToDoListViewInput {
     
     func displayError(_ error: String) { }
     
+    func updateTask(_ task: TaskEntity) { }
+    
     func reloadData() { }
 }

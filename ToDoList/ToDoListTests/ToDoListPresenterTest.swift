@@ -98,6 +98,17 @@ final class ToDoListPresenterTest: XCTestCase {
         XCTAssertTrue(mockView.displayErrorCalled, "displayError was not called in view")
         XCTAssertEqual(mockView.displayedError, error.localizedDescription, "Displayed error message does not match")
     }
+    
+    func testDidUpdateTask_ShouldUpdateTaskInView() {
+        let updatedTask = TaskEntity(id: 1, title: "Updated Task", todo: "Updated Todo", createdDate: Date(), completed: true)
+        
+        presenter.didUpdateTask(updatedTask)
+        
+        XCTAssertTrue(mockView.updateTaskCalled, "updateTask was not called in view")
+        XCTAssertEqual(mockView.updatedTask?.id, updatedTask.id, "Updated task ID does not match")
+        XCTAssertEqual(mockView.updatedTask?.title, updatedTask.title, "Updated task title does not match")
+        XCTAssertEqual(mockView.updatedTask?.todo, updatedTask.todo, "Updated task todo does not match")
+    }
 }
 
 final class MockInteractor: ToDoListInteractorInput {
@@ -144,6 +155,8 @@ final class MockView: ToDoListViewInput {
     var displayedTasks: [TaskEntity]?
     var displayErrorCalled = false
     var displayedError: String?
+    var updateTaskCalled = false
+    var updatedTask: TaskEntity?
 
     func displayTasks(_ tasks: [TaskEntity]) {
         displayTasksCalled = true
@@ -154,7 +167,12 @@ final class MockView: ToDoListViewInput {
         displayErrorCalled = true
         displayedError = errorMessage
     }
-    
+
+    func updateTask(_ task: TaskEntity) {
+        updateTaskCalled = true
+        updatedTask = task
+    }
+
     func didAddNewTask(task: TaskEntity) { }
     
     func didEditTask(task: TaskEntity) { }
