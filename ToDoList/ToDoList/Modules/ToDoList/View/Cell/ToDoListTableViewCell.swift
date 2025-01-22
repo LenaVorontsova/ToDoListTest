@@ -79,6 +79,7 @@ final class ToDoListTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.backgroundColor = .black
         self.selectionStyle = .none
         addSubviews()
         setupLayout()

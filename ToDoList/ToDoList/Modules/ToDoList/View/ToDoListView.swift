@@ -27,6 +27,7 @@ final class ToDoListView: UIView {
         view.placeholder = Localize.ToDoList.search.getValue()
         view.backgroundColor = .black
         view.searchBarStyle = .minimal
+        view.searchTextField.textColor = .white
         view.tintColor = UIColor(red: 254/255, green: 215/255, blue: 2/255, alpha: 1)
         
         view.translatesAutoresizingMaskIntoConstraints = false

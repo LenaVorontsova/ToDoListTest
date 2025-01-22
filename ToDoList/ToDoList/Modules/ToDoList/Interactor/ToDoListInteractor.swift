@@ -16,6 +16,7 @@ protocol ToDoListInteractorInput {
 }
 
 protocol ToDoListInteractorOutput: AnyObject {
+    func didUpdateTask(_ task: TaskEntity)
     func didFetchTasks(_ tasks: [TaskEntity])
     func didFailFetchingTasks(with error: Error)
 }
@@ -69,7 +70,7 @@ final class ToDoListInteractor: ToDoListInteractorInput {
         DispatchQueue.global(qos: .background).async {
             self.coreDataManager.updateTask(task)
             DispatchQueue.main.async {
-                self.fetchTasks()
+                self.presenter?.didUpdateTask(task)
             }
         }
     }

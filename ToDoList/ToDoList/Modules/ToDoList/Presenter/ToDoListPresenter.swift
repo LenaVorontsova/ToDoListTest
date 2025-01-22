@@ -59,4 +59,8 @@ final class ToDoListPresenter: ToDoListViewOutput, ToDoListInteractorOutput {
     func didFailFetchingTasks(with error: any Error) {
         view?.displayError(error.localizedDescription)
     }
+    
+    func didUpdateTask(_ task: TaskEntity) {
+        view?.updateTask(task)
+    }
 }

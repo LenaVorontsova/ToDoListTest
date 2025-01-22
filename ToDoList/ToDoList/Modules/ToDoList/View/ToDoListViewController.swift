@@ -12,6 +12,7 @@ protocol ToDoListViewInput: AnyObject {
     func displayError(_ error: String)
     func didAddNewTask(task: TaskEntity)
     func didEditTask(task: TaskEntity)
+    func updateTask(_ task: TaskEntity)
     func reloadData()
 }
 
@@ -39,6 +40,7 @@ final class ToDoListViewController: UIViewController {
         
         setupTableView()
         setupSearchBar()
+        hideKeyboardWhenTappedAround()
     }
     
     private func setupTableView() {
@@ -58,28 +60,29 @@ final class ToDoListViewController: UIViewController {
             filteredTasks = tasks
         } else {
             filteredTasks = tasks.filter { task in
-                task.title?.lowercased().contains(searchText.lowercased()) == true ||
-                task.todo?.lowercased().contains(searchText.lowercased()) == true
+                task.title?.localizedCaseInsensitiveContains(searchText) == true ||
+                task.todo?.localizedCaseInsensitiveContains(searchText) == true
             }
         }
-        
-        self.mainView.toDoListTableView.reloadData()
+        DispatchQueue.main.async {
+            self.mainView.toDoListTableView.reloadData()
+        }
     }
     
     // - MARK: Context Menu Tasks
     func editTask(at indexPath: IndexPath) {
-        presenter?.addNewTaskTapped(tasks[indexPath.row])
+        presenter?.addNewTaskTapped(filteredTasks[indexPath.row])
     }
     
     func shareTask(at indexPath: IndexPath) {
-        let textToShare = (tasks[indexPath.row].title ?? "") + "\n" + (tasks[indexPath.row].todo ?? "")
+        let textToShare = (filteredTasks[indexPath.row].title ?? "") + "\n" + (filteredTasks[indexPath.row].todo ?? "")
         let activity = UIActivityViewController(activityItems: [textToShare],
                                                 applicationActivities: nil)
         present(activity, animated: true)
     }
     
     func deleteTask(at indexPath: IndexPath) {
-        presenter?.deleteTaskTapped(id: tasks[indexPath.row].id ?? 0)
+        presenter?.deleteTaskTapped(id: filteredTasks[indexPath.row].id ?? 0)
     }
 }
 
@@ -93,12 +96,19 @@ extension ToDoListViewController: ToDoListViewDelegate {
 // - MARK: ToDoListTableViewCellDelegate
 extension ToDoListViewController: ToDoListTableViewCellDelegate {
     func didToggleCheckbox(for task: TaskEntity) {
-        guard let index = tasks.firstIndex(where: { $0.id == task.id }) else { return }
-        tasks[index].completed?.toggle()
-        presenter?.updateTaskTapped(task: tasks[index])
+        guard let filteredIndex = filteredTasks.firstIndex(where: { $0.id == task.id }) else { return }
         
+        filteredTasks[filteredIndex].completed?.toggle()
+        
+        if let fullIndex = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[fullIndex].completed = filteredTasks[filteredIndex].completed
+        }
+        
+        presenter?.updateTaskTapped(task: filteredTasks[filteredIndex])
+        
+        let indexPath = IndexPath(row: filteredIndex, section: 0)
         DispatchQueue.main.async {
-            self.mainView.toDoListTableView.reloadData()
+            self.mainView.toDoListTableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
 }
@@ -107,6 +117,13 @@ extension ToDoListViewController: ToDoListTableViewCellDelegate {
 extension ToDoListViewController: ToDoListViewInput {
     func displayTasks(_ tasks: [TaskEntity]) {
         self.tasks = tasks
+        
+        if let searchText = self.mainView.searchBar.text, !searchText.isEmpty {
+            filterTasks(for: searchText)
+        } else {
+            filteredTasks = tasks
+        }
+        
         DispatchQueue.main.async {
             self.mainView.toDoListTableView.reloadData()
             self.mainView.setTasksCount(tasks.count)
@@ -127,6 +144,21 @@ extension ToDoListViewController: ToDoListViewInput {
         presenter?.updateTaskTapped(task: task)
     }
     
+    func updateTask(_ task: TaskEntity) {
+        if let fullIndex = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[fullIndex] = task
+        }
+        
+        if let filteredIndex = filteredTasks.firstIndex(where: { $0.id == task.id }) {
+            filteredTasks[filteredIndex] = task
+            let indexPath = IndexPath(row: filteredIndex, section: 0)
+            
+            DispatchQueue.main.async {
+                self.mainView.toDoListTableView.reloadRows(at: [indexPath], with: .automatic)
+            }
+        }
+    }
+    
     func reloadData() {
         DispatchQueue.main.async {
             self.mainView.toDoListTableView.reloadData()
@@ -137,7 +169,7 @@ extension ToDoListViewController: ToDoListViewInput {
 // - MARK: UITableViewDelegate, UITableViewDataSource
 extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tasks.count
+        filteredTasks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -146,7 +178,7 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
             for: indexPath
         ) as? ToDoListTableViewCell else { fatalError("ToDoListTableViewCell not found") }
         
-        let task = tasks[indexPath.row]
+        let task = filteredTasks[indexPath.row]
         cell.delegate = self
         cell.configure(task: task)
         
@@ -154,7 +186,7 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        let task = tasks[indexPath.row]
+        let task = filteredTasks[indexPath.row]
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: {
             let previewViewController = TaskPreviewViewController()

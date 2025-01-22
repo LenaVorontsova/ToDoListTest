@@ -13,7 +13,7 @@ class TaskPreviewViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1)
         
         setupUI()
     }
@@ -24,19 +24,21 @@ class TaskPreviewViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.text = task.title
         titleLabel.font = .boldSystemFont(ofSize: 16)
+        titleLabel.textColor = .white
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let todoLabel = UILabel()
         todoLabel.text = task.todo
         todoLabel.font = .systemFont(ofSize: 12)
         todoLabel.numberOfLines = 0
+        todoLabel.textColor = .white
         todoLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let dateLabel = UILabel()
         dateLabel.text = task.todo
         dateLabel.font = .systemFont(ofSize: 12)
-        dateLabel.textColor = .tertiaryLabel
         dateLabel.numberOfLines = 0
+        dateLabel.textColor = .white.withAlphaComponent(0.5)
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let dateFormatter = DateFormatter()
